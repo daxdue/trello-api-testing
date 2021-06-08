@@ -100,7 +100,7 @@
                 <version>1.0.2</version>
                 <configuration>
                     <sourceDirectory>${basedir}/src/main/resources/schemes</sourceDirectory>
-                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                    <outputDirectory>${basedir}/src/main/java/ru/training/apitesting</outputDirectory>
                     <targetPackage>beans</targetPackage>
                     <addCompileSourceRoot>true</addCompileSourceRoot>
                     <sourceType>json</sourceType>

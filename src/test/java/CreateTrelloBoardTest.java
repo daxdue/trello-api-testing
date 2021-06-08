@@ -1,8 +1,10 @@
-import ru.training.apitesting.beans.TrelloBoard;
 import io.restassured.http.Method;
 import org.hamcrest.Matchers;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.Test;
+import ru.training.apitesting.beans.TrelloBoard;
+import ru.training.apitesting.constant.QueryParams;
+import ru.training.apitesting.constant.RequestSpecType;
 
 import static ru.training.apitesting.constant.TestGroups.*;
 import static ru.training.apitesting.services.TrelloBoardService.*;
@@ -15,9 +17,10 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
         if(boardId != null) {
             requestBuilder()
                 .setRequestMethod(Method.DELETE)
-                .setPathParam(boardId)
+                .addPathParam(QueryParams.BOARD_ID_PATH, boardId)
+                /*.setPathParam(boardId)*/
                 .build()
-            .sendRequest(goodResponseSpec());
+            .sendRequest(RequestSpecType.WITH_PATH_PARAMS, goodResponseSpec());
         }
     }
 
@@ -28,7 +31,7 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
                     .setRequestMethod(Method.POST)
                     .setBoardName("Board name")
                     .build()
-                .sendRequest(goodResponseSpec())
+                .sendRequest(RequestSpecType.WITHOUT_PATH_PARAMS, goodResponseSpec())
                 .extract()
                 .response()
         );
@@ -41,7 +44,7 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
         requestBuilder()
             .setRequestMethod(Method.POST)
             .build()
-        .sendRequest(badResponseSpec())
+        .sendRequest(RequestSpecType.WITHOUT_PATH_PARAMS, badResponseSpec())
         .extract()
         .response();
     }

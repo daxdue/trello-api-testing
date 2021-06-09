@@ -24,6 +24,7 @@
         <hamcrest-core.version>2.2</hamcrest-core.version>
         <testng.configs.path>${project.build.testSourceDirectory}/resources</testng.configs.path>
         <testng.suite.file/>
+        <commons-lang.version>2.4</commons-lang.version>
     </properties>
 
     <dependencies>
@@ -41,6 +42,11 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${commons-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>${commons-lang.version}</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -100,19 +106,19 @@
                 <version>1.0.2</version>
                 <configuration>
                     <sourceDirectory>${basedir}/src/main/resources/schemes</sourceDirectory>
-                    <outputDirectory>${basedir}/src/main/java/ru/training/apitesting</outputDirectory>
-                    <targetPackage>beans</targetPackage>
+                    <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                    <targetPackage>ru.training.apitesting.beans</targetPackage>
                     <addCompileSourceRoot>true</addCompileSourceRoot>
                     <sourceType>json</sourceType>
                     <annotationStyle>gson</annotationStyle>
                 </configuration>
-                <executions>
+                <!--<executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                     </execution>
-                </executions>
+                </executions>-->
             </plugin>
         </plugins>
     </build>

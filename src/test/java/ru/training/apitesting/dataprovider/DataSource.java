@@ -1,4 +1,4 @@
-package dataprovider;
+package ru.training.apitesting.dataprovider;
 
 import org.testng.annotations.DataProvider;
 import ru.training.apitesting.beans.TrelloBoard;

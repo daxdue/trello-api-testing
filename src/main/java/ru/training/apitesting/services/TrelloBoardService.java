@@ -1,6 +1,7 @@
 package ru.training.apitesting.services;
 
 import com.google.gson.Gson;
+import ru.training.apitesting.constant.PathParams;
 import ru.training.apitesting.constant.QueryParams;
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -22,19 +23,20 @@ import java.util.Map;
 
 public class TrelloBoardService {
 
-    private String pathParam;
+    private String pathPattern;
     private Method requestMethod;
     private Map<String, String> queryParams;
     private Map<String, String> pathParams;
 
     public TrelloBoardService(Map<String, String> parameters, Map<String, String> pathParams,
-                              Method requestMethod) {
+                              Method requestMethod, String pathPattern) {
         this.queryParams = parameters;
         this.requestMethod = requestMethod;
-        this.pathParam = pathParam;
+        this.pathParams = pathParams;
+        this.pathPattern = pathPattern;
     }
 
-    public static RequestSpecification requestSpec() {
+    public static RequestSpecification requestSpecBase() {
         return new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
@@ -44,6 +46,16 @@ public class TrelloBoardService {
                 .build();
     }
 
+    public static RequestSpecification requestSpecWithQueryParams(Map<String, String> queryParams) {
+        return new RequestSpecBuilder()
+                .setAccept(ContentType.JSON)
+                .setContentType(ContentType.JSON)
+                .setBaseUri(PropertyManager.getApiBaseUrl())
+                .addQueryParam(QueryParams.API_KEY, PropertyManager.getApiKey())
+                .addQueryParam(QueryParams.API_TOKEN, PropertyManager.getApiToken())
+                .addQueryParams(queryParams)
+                .build();
+    }
     public static RequestSpecification requestSpecWithPathParams(Map<String, String> pathParams) {
         return new RequestSpecBuilder()
                 .setAccept(ContentType.JSON)
@@ -51,6 +63,21 @@ public class TrelloBoardService {
                 .setBaseUri(PropertyManager.getApiBaseUrl())
                 .addQueryParam(QueryParams.API_KEY, PropertyManager.getApiKey())
                 .addQueryParam(QueryParams.API_TOKEN, PropertyManager.getApiToken())
+                .addPathParams(pathParams)
+                .build();
+    }
+
+    public static RequestSpecification requestSpecWithQueryAndPathParams(
+            Map<String, String> queryParams,
+            Map<String, String> pathParams) {
+
+        return new RequestSpecBuilder()
+                .setAccept(ContentType.JSON)
+                .setContentType(ContentType.JSON)
+                .setBaseUri(PropertyManager.getApiBaseUrl())
+                .addQueryParam(QueryParams.API_KEY, PropertyManager.getApiKey())
+                .addQueryParam(QueryParams.API_TOKEN, PropertyManager.getApiToken())
+                .addQueryParams(queryParams)
                 .addPathParams(pathParams)
                 .build();
     }
@@ -79,29 +106,59 @@ public class TrelloBoardService {
                 .build();
     }
 
-    public static RequestSpecification requestSpecification(RequestSpecType requestSpecType,
-                                                            Map<String, String> queryParams,
-                                                            Map<String, String> pathParams) {
-        if (requestSpecType == RequestSpecType.WITH_PATH_PARAMS) {
-            return requestSpecWithPathParams(pathParams);
+    public static RequestSpecification requestSpecification(
+            RequestSpecType requestSpecType,
+            Map<String, String> queryParams,
+            Map<String, String> pathParams) {
+
+        RequestSpecification requestSpecification = null;
+
+        switch (requestSpecType) {
+            case PATH_PARAMS:
+                requestSpecification =  requestSpecWithPathParams(pathParams);
+                break;
+
+            case QUERY_PARAMS:
+                requestSpecification = requestSpecWithQueryParams(queryParams);
+                break;
+
+            case QUERY_AND_PATH_PARAMS:
+                requestSpecification = requestSpecWithQueryAndPathParams(queryParams, pathParams);
+                break;
+
+            default:
+                requestSpecification = requestSpecBase();
+                break;
         }
-        return requestSpec();
+
+        return requestSpecification;
     }
 
     public ValidatableResponse sendRequest(RequestSpecType requestSpecType,
             ResponseSpecification responseSpecification) {
 
         return RestAssured
-                .given(requestSpec()).log().all()
-                    .spec(requestSpecification(requestSpecType, queryParams, pathParams))
-                    /*.pathParam("id", pathParam)*/
-                    /*.queryParams(queryParams)*/
+                .given(requestSpecification(requestSpecType, queryParams, pathParams))
                 .when()
-                    .request(requestMethod/*,PropertyManager.getApiBaseUrl() + BOARD_ID_PATH*/)
+                    .request(requestMethod,PropertyManager.getApiBaseUrl() + pathPattern)
                 .then().log().all()
                     .spec(responseSpecification);
     }
 
+    public static TrelloBoard getBoardFromResponse(Response response) {
+        TrelloBoard trelloBoard = new Gson().fromJson(response.asString().trim(), TrelloBoard.class);
+        return trelloBoard;
+    }
+
+    public static SpecificResponse getSpecificResponse(Response response) {
+        SpecificResponse specificResponse = new Gson().fromJson(
+                response.asString().trim(), SpecificResponse.class);
+        return specificResponse;
+    }
+
+    public static String getStringFromResponse(Response response) {
+        return response.asString().trim();
+    }
 
     public static ApiRequestBuilder requestBuilder() {
         return new ApiRequestBuilder();
@@ -109,10 +166,11 @@ public class TrelloBoardService {
 
     //Request builder class
     public static class ApiRequestBuilder {
-        private String pathParam = "";
+
+        private String pathPattern = "";
+        private Method requestMethod = Method.GET;
         private Map<String, String> params = new HashMap<>();
         private Map<String, String> pathParams = new HashMap<>();
-        private Method requestMethod = Method.GET;
 
         public ApiRequestBuilder setRequestMethod(Method method) {
             this.requestMethod = method;
@@ -124,28 +182,14 @@ public class TrelloBoardService {
             return this;
         }
 
-        public ApiRequestBuilder setPathParam(String pathParam) {
-            this.pathParam = new String(pathParam);
-            return this;
-        }
-
         public ApiRequestBuilder addPathParam(String key, String value) {
             this.pathParams.put(key, value);
+            this.pathPattern += String.format(PathParams.PATH_PATTERN, key);
             return this;
         }
 
         public TrelloBoardService build() {
-            return new TrelloBoardService(params, pathParams, requestMethod);
+            return new TrelloBoardService(params, pathParams, requestMethod, pathPattern);
         }
     }
-
-    public static TrelloBoard getBoardFromResponse(Response response) {
-        TrelloBoard trelloBoard = new Gson().fromJson(response.asString().trim(), TrelloBoard.class);
-        return trelloBoard;
-    }
-
-    public static String getStringFromResponse(Response response) {
-        return response.asString().trim();
-    }
-
 }

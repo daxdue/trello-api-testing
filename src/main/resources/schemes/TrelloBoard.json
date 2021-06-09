@@ -1,12 +1,7 @@
 {
   "id": "60be67b8a94ae643aa97256a",
   "name": "New board name",
-  "desc": "",
-  "descData": null,
-  "closed": false,
   "idOrganization": "60b8eb13d0d6bb2ead8c6631",
-  "idEnterprise": null,
-  "pinned": false,
   "url": "https://trello.com/b/hNvurpvv/new-board-name",
   "shortUrl": "https://trello.com/b/hNvurpvv"
 }

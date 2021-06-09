@@ -10,9 +10,9 @@ import java.io.*;
 public class JsonTestDataLoader {
 
     private static final String TEST_BOARD_JSON_FILE_PATH =
-            "src/test/resources/test_data/test_board.json";
+            "src/test/java/resources/test_data/test_board.json";
     private static final String TEST_NONEXISTENT_BOARD_FILE_PATH =
-            "src/test/resources/test_data/test_board_nonexistent.json";
+            "src/test/java/resources/test_data/test_board_nonexistent.json";
     private static final String CHARSET = "UTF-8";
 
     public static TrelloBoard load(TestBoardType testBoardType) {

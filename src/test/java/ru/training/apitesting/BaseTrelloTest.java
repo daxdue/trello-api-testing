@@ -1,3 +1,4 @@
+package ru.training.apitesting;
 
 public class BaseTrelloTest {
 

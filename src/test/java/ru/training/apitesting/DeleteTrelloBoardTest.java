@@ -1,13 +1,12 @@
-import dataprovider.DataSource;
+package ru.training.apitesting;
+
+import ru.training.apitesting.beans.TrelloBoard;
+import ru.training.apitesting.dataprovider.DataSource;
 import io.restassured.http.Method;
 import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
-import ru.training.apitesting.beans.TrelloBoard;
-import ru.training.apitesting.constant.ResponseMessages;
-import ru.training.apitesting.constant.TestBoardType;
-import ru.training.apitesting.constant.TestGroups;
-import ru.training.apitesting.constant.TrelloBoardDataProviders;
+import ru.training.apitesting.constant.*;
 import ru.training.apitesting.utils.JsonTestDataLoader;
 
 import static ru.training.apitesting.services.TrelloBoardService.*;
@@ -23,7 +22,7 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
                 .setBoardName(JsonTestDataLoader
                         .load(TestBoardType.NONEXISTENT_BOARD).getName())
                 .build()
-                .sendRequest(goodResponseSpec())
+                .sendRequest(RequestSpecType.QUERY_PARAMS, goodResponseSpec())
                 .extract()
                 .response()
         );
@@ -33,10 +32,10 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
     @Test (groups = {TestGroups.REQUIRE_CREATE_BEFORE})
     public void deleteExistingBoardTest() {
         requestBuilder()
-                .setPathParam(boardId)
+                .addPathParam(PathParams.BOARD_ID_PARAM, boardId)
                 .setRequestMethod(Method.DELETE)
                 .build()
-        .sendRequest(goodResponseSpec());
+        .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec());
     }
 
     @Test (dataProvider = TrelloBoardDataProviders.TRELLO_NONEXISTENT_BOARD_DATA_PROVIDER,
@@ -44,10 +43,10 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
     public void deleteNonexistentBoardTest(TrelloBoard trelloBoard) {
         String result = getStringFromResponse(
             requestBuilder()
-                .setPathParam(trelloBoard.getId())
+                .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
                 .setRequestMethod(Method.DELETE)
                 .build()
-            .sendRequest(badResponseSpec())
+            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
             .extract()
             .response()
         );

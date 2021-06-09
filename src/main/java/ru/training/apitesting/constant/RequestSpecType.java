@@ -1,6 +1,8 @@
 package ru.training.apitesting.constant;
 
 public enum RequestSpecType {
-    WITHOUT_PATH_PARAMS,
-    WITH_PATH_PARAMS
+    NO_PARAMS,
+    QUERY_PARAMS,
+    PATH_PARAMS,
+    QUERY_AND_PATH_PARAMS
 }

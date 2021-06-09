@@ -1,9 +1,12 @@
-import dataprovider.DataSource;
+package ru.training.apitesting;
+
+import ru.training.apitesting.beans.TrelloBoard;
+import ru.training.apitesting.dataprovider.DataSource;
 import io.restassured.http.Method;
 import org.hamcrest.Matchers;
 import org.testng.annotations.Test;
-import ru.training.apitesting.beans.TrelloBoard;
-import ru.training.apitesting.constant.QueryParams;
+import ru.training.apitesting.constant.PathParams;
+import ru.training.apitesting.constant.RequestSpecType;
 import ru.training.apitesting.constant.ResponseMessages;
 
 import static ru.training.apitesting.services.TrelloBoardService.*;
@@ -18,10 +21,10 @@ public class UpdateTrelloBoardTest {
         TrelloBoard updatedBoard = getBoardFromResponse(
                 requestBuilder()
                     .setRequestMethod(Method.PUT)
-                    .setPathParam(trelloBoard.getId())
+                    .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
                     .setBoardName(trelloBoard.getName())
                     .build()
-                .sendRequest(goodResponseSpec())
+                .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec())
                 .extract()
                 .response()
         );
@@ -34,9 +37,9 @@ public class UpdateTrelloBoardTest {
         String result = getStringFromResponse(
             requestBuilder()
                 .setRequestMethod(Method.PUT)
-                .addPathParam(QueryParams.BOARD_ID_PATH, trelloBoard.getId())
+                .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
                 .build()
-            .sendRequest(badResponseSpec())
+            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
             .extract()
             .response()
         );

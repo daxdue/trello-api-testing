@@ -136,7 +136,6 @@ public class TrelloBoardService {
 
     public ValidatableResponse sendRequest(RequestSpecType requestSpecType,
             ResponseSpecification responseSpecification) {
-
         return RestAssured
                 .given(requestSpecification(requestSpecType, queryParams, pathParams))
                 .when()
@@ -144,6 +143,7 @@ public class TrelloBoardService {
                 .then().log().all()
                     .spec(responseSpecification);
     }
+
 
     public static TrelloBoard getBoardFromResponse(Response response) {
         TrelloBoard trelloBoard = new Gson().fromJson(response.asString().trim(), TrelloBoard.class);
@@ -169,6 +169,8 @@ public class TrelloBoardService {
 
         private String pathPattern = "";
         private Method requestMethod = Method.GET;
+        private RequestSpecType requestSpecType;
+        private ResponseSpecification responseSpecification;
         private Map<String, String> params = new HashMap<>();
         private Map<String, String> pathParams = new HashMap<>();
 
@@ -182,14 +184,27 @@ public class TrelloBoardService {
             return this;
         }
 
+        public ApiRequestBuilder setRequestSpecType(RequestSpecType requestSpecType) {
+            this.requestSpecType = requestSpecType;
+            return this;
+        }
+
+        public ApiRequestBuilder setResponseSpecification(ResponseSpecification responseSpecification) {
+            this.responseSpecification = responseSpecification;
+            return this;
+        }
+
         public ApiRequestBuilder addPathParam(String key, String value) {
             this.pathParams.put(key, value);
             this.pathPattern += String.format(PathParams.PATH_PATTERN, key);
             return this;
         }
 
-        public TrelloBoardService build() {
-            return new TrelloBoardService(params, pathParams, requestMethod, pathPattern);
+        public Response build() {
+            return new TrelloBoardService(params, pathParams, requestMethod, pathPattern)
+                    .sendRequest(requestSpecType, responseSpecification)
+                    .extract()
+                    .response();
         }
     }
 }

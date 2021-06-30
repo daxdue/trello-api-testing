@@ -21,11 +21,9 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
                 .setRequestMethod(Method.POST)
                 .setBoardName(JsonTestDataLoader
                         .load(TestBoardType.NONEXISTENT_BOARD).getName())
-                .build()
-                .sendRequest(RequestSpecType.QUERY_PARAMS, goodResponseSpec())
-                .extract()
-                .response()
-        );
+                .setRequestSpecType(RequestSpecType.QUERY_PARAMS)
+                .setResponseSpecification(goodResponseSpec())
+                .build());
         boardId = board.getId();
     }
 
@@ -34,8 +32,9 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
         requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, boardId)
                 .setRequestMethod(Method.DELETE)
-                .build()
-        .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec());
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(goodResponseSpec())
+                .build();
     }
 
     @Test (dataProvider = TrelloBoardDataProviders.TRELLO_NONEXISTENT_BOARD_DATA_PROVIDER,
@@ -45,11 +44,9 @@ public class DeleteTrelloBoardTest extends BaseTrelloTest {
             requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
                 .setRequestMethod(Method.DELETE)
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(badResponseSpec())
+                .build());
         assertThat(result, Matchers.equalTo(ResponseMessages.INVALID_ID));
     }
 }

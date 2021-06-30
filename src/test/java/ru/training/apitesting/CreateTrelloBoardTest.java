@@ -23,8 +23,9 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
             requestBuilder()
                 .setRequestMethod(Method.DELETE)
                 .addPathParam(PathParams.BOARD_ID_PARAM, boardId)
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec());
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(goodResponseSpec())
+                .build();
         }
     }
 
@@ -36,11 +37,9 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
                 requestBuilder()
                     .setRequestMethod(Method.POST)
                     .setBoardName(testBoard.getName())
-                    .build()
-                .sendRequest(RequestSpecType.QUERY_PARAMS, goodResponseSpec())
-                .extract()
-                .response()
-        );
+                    .setRequestSpecType(RequestSpecType.QUERY_PARAMS)
+                    .setResponseSpecification(goodResponseSpec())
+                    .build());
         boardId = createdBoard.getId();
         assertThat(createdBoard.getName(), Matchers.equalTo(testBoard.getName()));
     }
@@ -50,11 +49,9 @@ public class CreateTrelloBoardTest extends BaseTrelloTest {
         String response = getStringFromResponse(
             requestBuilder()
                 .setRequestMethod(Method.POST)
-                .build()
-                .sendRequest(RequestSpecType.QUERY_PARAMS, badResponseSpec())
-                .extract()
-                .response()
-        );
+                .setRequestSpecType(RequestSpecType.QUERY_PARAMS)
+                .setResponseSpecification(badResponseSpec())
+                .build());
         assertThat(response, Matchers.equalTo(ResponseMessages.INVALID_NAME));
     }
 }

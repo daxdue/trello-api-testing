@@ -18,11 +18,9 @@ public class GetTrelloBoardTest {
         TrelloBoard actualBoard = getBoardFromResponse(
             requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, expectedBoard.getId())
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(goodResponseSpec())
+                .build());
         assertThat(actualBoard, Matchers.equalTo(expectedBoard));
     }
 
@@ -32,11 +30,9 @@ public class GetTrelloBoardTest {
         String result = getStringFromResponse(
             requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, testTrelloBoard.getId())
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(badResponseSpec())
+                .build());
         assertThat(result, Matchers.equalTo(ResponseMessages.INVALID_ID));
     }
 
@@ -47,11 +43,9 @@ public class GetTrelloBoardTest {
             requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, testTrelloBoard.getId())
                 .addPathParam(PathParams.BOARD_NAME_PARAM, PathParams.BOARD_NAME_PARAM)
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(goodResponseSpec())
+                .build());
         assertThat(specificResponse.getValue(), Matchers.equalTo(testTrelloBoard.getName()));
     }
 
@@ -62,11 +56,9 @@ public class GetTrelloBoardTest {
             requestBuilder()
                 .addPathParam(PathParams.BOARD_ID_PARAM, testTrelloBoard.getId())
                 .addPathParam(PathParams.BOARD_NONEXISTENT_PARAM, PathParams.BOARD_NONEXISTENT_PARAM)
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(badResponseSpec())
+                .build());
         assertThat(response, Matchers.containsString(ResponseMessages.CANNOT_GET));
     }
 }

@@ -23,11 +23,9 @@ public class UpdateTrelloBoardTest {
                     .setRequestMethod(Method.PUT)
                     .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
                     .setBoardName(trelloBoard.getName())
-                    .build()
-                .sendRequest(RequestSpecType.PATH_PARAMS, goodResponseSpec())
-                .extract()
-                .response()
-        );
+                    .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                    .setResponseSpecification(goodResponseSpec())
+                    .build());
         assertThat(updatedBoard.getName(), Matchers.equalTo(trelloBoard.getName()));
     }
 
@@ -38,11 +36,9 @@ public class UpdateTrelloBoardTest {
             requestBuilder()
                 .setRequestMethod(Method.PUT)
                 .addPathParam(PathParams.BOARD_ID_PARAM, trelloBoard.getId())
-                .build()
-            .sendRequest(RequestSpecType.PATH_PARAMS, badResponseSpec())
-            .extract()
-            .response()
-        );
+                .setRequestSpecType(RequestSpecType.PATH_PARAMS)
+                .setResponseSpecification(badResponseSpec())
+                .build());
         assertThat(result, Matchers.equalTo(ResponseMessages.INVALID_ID));
     }
 }
